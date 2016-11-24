@@ -1,0 +1,119 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>Hello APP</title>
+    <link rel="stylesheet" type="text/css" href="./css/api.css" />
+
+</head>
+<body>
+
+</body>
+<script type="text/javascript" src="./script/api.js"></script>
+<script type="text/javascript">
+    apiready = function(){
+		//console.log("Hello APICloud");
+        api.openFrame({
+            name: 'main',
+            url: 'http://www.nongshewang.com/mobile/',
+            bounces: false,
+            progress:{//设置进度条类型和样式
+		    	type:'page',
+		    	color:'#09C'
+		    },
+            rect: {
+                x: 0,
+                y: 0,
+                w: 'auto',
+                h: 'auto'
+            }
+        });
+
+var mkeyTime = new Date().getTime();
+
+api.addEventListener({
+            name: 'keyback'
+        }, function(ret, err){
+        
+            if ((new Date().getTime() - mkeyTime) > 500) {
+              mkeyTime = new Date().getTime();
+               var js = 'history.back()';
+                api.execScript({
+                //name:'blank',
+                frameName: 'main',
+                script: js
+            });
+            
+              } else {
+                Qxit();
+                }
+        });
+        
+       api.setFrameClient({
+		    frameName:'main'
+		},function(ret){
+		    onFrameStateChange(ret);
+		});
+
+    };
+
+function Qxit() {              
+        api.confirm({
+            title:'提示：',
+            msg:'确定退出吗？',
+            buttons:['确定','取消']
+        },function(ret,err){
+            if(ret.buttonIndex==1){
+            api.toast({msg: '祝您开心每一天', location: "bottom"});
+                setTimeout(function() {
+						api.closeWidget({
+							silent : true
+						});
+					}, 500);
+            }
+        })
+    }
+
+function onFrameStateChange(ret){
+    	if(0 == ret.state){//frame开始加载
+    		//var url = ret.url;
+    		//console.log('frame loading start: ' + url);
+    	}else if(1 == ret.state){//frame加载进度发生变化
+    		//var p = ret.progress;
+    		//console.log('frame loading: ' + p);
+    	}else if(2 == ret.state){//frame结束加载
+    		//var url = ret.url;
+    		//console.log('frame loading finish: ' + url);
+    	}else if(3 == ret.state){//frame标题发生变化
+    		//$('title').innerHTML = ret.title;
+    	}
+    }   
+	//历史记录后退
+function GoToHisBack(){
+    	api.historyBack({
+    		frameName:"frame"
+    	}, function(ret){
+    		if(!ret.status){//没有历史记录了则关闭当前窗口
+    			api.closeWin();
+    		}
+    	});
+    }
+    
+	//历史记录前进
+function GoToHisForward(){
+    	api.historyForward({
+    		frameName:"frame"
+    	});
+    }
+    
+function GoToRefresh(){
+    	api.execScript({
+            frameName: 'frame',
+            script: 'location.reload();'
+        });
+    }
+
+</script>
+</html>
